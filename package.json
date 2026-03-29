@@ -1,0 +1,54 @@
+{
+  "name": "@a2native/js",
+  "version": "0.1.0",
+  "description": "JavaScript/TypeScript SDK for a2native — native desktop UI forms for AI agents",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "node --test",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "a2native",
+    "ai-agent",
+    "generative-ui",
+    "human-in-the-loop",
+    "native-ui",
+    "form",
+    "egui"
+  ],
+  "author": "a2native contributors",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/a2native/a2native-js.git"
+  },
+  "homepage": "https://a2native.github.io",
+  "bugs": {
+    "url": "https://github.com/a2native/a2native-js/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "typescript": "^5.4.0"
+  },
+  "optionalDependencies": {
+    "@a2native/a2native": "*"
+  }
+}
