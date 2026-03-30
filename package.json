@@ -1,6 +1,6 @@
 {
   "name": "@a2native/js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "JavaScript/TypeScript SDK for a2native — native desktop UI forms for AI agents",
   "type": "module",
   "main": "./dist/index.js",
