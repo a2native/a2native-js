@@ -25,13 +25,36 @@ jobs:
       - run: npm install
       - run: npm run build
 
-      - name: Publish @a2native/js
+      - name: Set version from tag
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           CURRENT=$(node -p "require('./package.json').version")
           if [ "$CURRENT" != "$VERSION" ]; then
             npm version "$VERSION" --no-git-tag-version
           fi
-          npm publish --access public --provenance
+
+      - name: Publish (Trusted Publishers / OIDC)
+        id: publish_oidc
+        continue-on-error: true
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish (fallback token, no provenance)
+        if: steps.publish_oidc.outcome == 'failure'
+        run: |
+          RESULT=$(npm publish --access public 2>&1) && echo "$RESULT" || {
+            if echo "$RESULT" | grep -q "EOTP\|OTP\|one-time"; then
+              echo "::warning::npm publish failed: 2FA OTP required. Use Trusted Publishers or an automation token."
+              echo "$RESULT"
+              exit 0
+            elif echo "$RESULT" | grep -q "previously published\|already exists"; then
+              echo "Version already exists on npm - skipping."
+              exit 0
+            else
+              echo "$RESULT"
+              exit 1
+            fi
+          }
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
