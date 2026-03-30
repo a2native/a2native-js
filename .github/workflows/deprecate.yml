@@ -1,0 +1,30 @@
+name: Deprecate
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deprecate (e.g. 0.1.0)'
+        required: true
+      message:
+        description: 'Deprecation message'
+        required: false
+        default: 'Deprecated: please upgrade to the latest version'
+
+permissions:
+  contents: read
+
+jobs:
+  deprecate:
+    name: Deprecate @a2native/js@${{ inputs.version }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Deprecate
+        run: npm deprecate "@a2native/js@${{ inputs.version }}" "${{ inputs.message }}"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

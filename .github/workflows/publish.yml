@@ -34,27 +34,17 @@ jobs:
           fi
 
       - name: Publish (Trusted Publishers / OIDC)
-        id: publish_oidc
-        continue-on-error: true
         run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish (fallback token, no provenance)
-        if: steps.publish_oidc.outcome == 'failure'
+      - name: Deprecate previous patch version
         run: |
-          RESULT=$(npm publish --access public 2>&1) && echo "$RESULT" || {
-            if echo "$RESULT" | grep -q "EOTP\|OTP\|one-time"; then
-              echo "::warning::npm publish failed: 2FA OTP required. Use Trusted Publishers or an automation token."
-              echo "$RESULT"
-              exit 0
-            elif echo "$RESULT" | grep -q "previously published\|already exists"; then
-              echo "Version already exists on npm - skipping."
-              exit 0
-            else
-              echo "$RESULT"
-              exit 1
-            fi
-          }
+          VERSION="${GITHUB_REF_NAME#v}"
+          PATCH="${VERSION##*.}"
+          if [ "$PATCH" -gt 0 ]; then
+            PREV="${VERSION%.*}.$((PATCH - 1))"
+            npm deprecate "@a2native/js@${PREV}" "Deprecated: upgrade to ${VERSION}" || true
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
