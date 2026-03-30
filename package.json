@@ -35,7 +35,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/a2native/a2native-js.git"
+    "url": "git+https://github.com/a2native/a2native-js.git"
   },
   "homepage": "https://a2native.github.io",
   "bugs": {
